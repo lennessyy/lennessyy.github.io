@@ -15,9 +15,9 @@
 	$form = $('form');
 
 	//form
-	$form.on('submit', function (e){
-		e.preventDefault();
-	});
+	// $form.on('submit', function (e){
+	// 	e.preventDefault();
+	// });
 
 	// Breakpoints.
 	breakpoints({
