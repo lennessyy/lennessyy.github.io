@@ -1662,13 +1662,14 @@ header > p {
 }
 
 .image img {
-	display: block;
+	display: inline-block;
 	width: 100%;
 }
 
 .image.fit {
 	display: block;
 	width: 100%;
+	text-align: center;
 }
 
 .image.featured {
