@@ -2321,3 +2321,7 @@ body.is-preload #wrapper {
 	overflow: hidden;
 	margin-top: 1em;
 }
+
+.writing-subject {
+	font-size: medium;
+}
