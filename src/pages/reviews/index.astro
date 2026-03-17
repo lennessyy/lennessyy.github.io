@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import reviews from '../../data/reviews.json';
+
+function stars(rating: number | null): string {
+  if (!rating) return '';
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  return '★'.repeat(full) + (half ? '½' : '');
+}
+---
+
+<BaseLayout title="Reviews — Lenny Chen">
+  <h1 class="text-2xl font-bold text-[var(--color-heading)]">Film reviews</h1>
+  <p class="mt-2 text-sm text-[var(--color-text-secondary)]">
+    Pulled from my <a href="https://letterboxd.com/lennessy/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-link)] hover:text-[var(--color-link-hover)] underline transition-colors">Letterboxd</a>.
+  </p>
+
+  <div class="mt-8 flex flex-col">
+    {reviews.map((r: any) => (
+      <a
+        href={r.reviewText ? `/reviews/${r.slug}` : r.letterboxdUrl}
+        target={r.reviewText ? undefined : '_blank'}
+        rel={r.reviewText ? undefined : 'noopener noreferrer'}
+        class="group flex items-baseline justify-between gap-4 border-b border-[var(--color-border)] py-3 first:border-t"
+      >
+        <div class="flex items-baseline gap-2 min-w-0">
+          <span class="font-medium text-[var(--color-heading)] group-hover:text-[var(--color-link)] transition-colors truncate">
+            {r.filmTitle}
+          </span>
+          {r.filmYear && (
+            <span class="shrink-0 text-sm text-[var(--color-text-tertiary)]">
+              ({r.filmYear})
+            </span>
+          )}
+        </div>
+        {r.rating && (
+          <span class="shrink-0 text-sm text-[var(--color-accent)]">
+            {stars(r.rating)}
+          </span>
+        )}
+      </a>
+    ))}
+  </div>
+</BaseLayout>

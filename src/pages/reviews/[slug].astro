@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import reviews from '../../data/reviews.json';
+
+export function getStaticPaths() {
+  return (reviews as any[])
+    .filter((r) => r.reviewText)
+    .map((r) => ({
+      params: { slug: r.slug },
+      props: { review: r },
+    }));
+}
+
+const { review } = Astro.props;
+
+function stars(rating: number | null): string {
+  if (!rating) return '';
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  return '★'.repeat(full) + (half ? '½' : '');
+}
+
+const watchedDate = new Date(review.watchedDate);
+---
+
+<BaseLayout title={`${review.filmTitle} — Lenny Chen`}>
+  <a href="/reviews" class="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
+    &larr; All reviews
+  </a>
+
+  <header class="mt-6">
+    <h1 class="text-2xl font-bold text-[var(--color-heading)]">
+      {review.filmTitle}
+      {review.filmYear && (
+        <span class="font-normal text-[var(--color-text-secondary)]">({review.filmYear})</span>
+      )}
+    </h1>
+    <div class="mt-2 flex items-center gap-3 text-sm text-[var(--color-text-secondary)]">
+      {review.rating && (
+        <span class="text-[var(--color-accent)]">{stars(review.rating)}</span>
+      )}
+      <time datetime={review.watchedDate}>
+        Watched {watchedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+    </div>
+  </header>
+
+  <div class="mt-6 space-y-4 leading-relaxed" set:html={review.reviewHtml} />
+
+  <p class="mt-8">
+    <a
+      href={review.letterboxdUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-sm text-[var(--color-link)] hover:text-[var(--color-link-hover)] underline transition-colors"
+    >
+      View on Letterboxd
+    </a>
+  </p>
+</BaseLayout>
