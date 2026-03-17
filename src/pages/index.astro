@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import BlogPostCard from '../components/BlogPostCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout>
+  <Hero />
+
+  <hr class="border-[var(--color-border)]" />
+
+  <section class="py-8">
+    <h2 class="text-lg font-semibold text-[var(--color-heading)]">Recent Posts</h2>
+    {posts.length === 0 ? (
+      <p class="mt-4 text-sm text-[var(--color-text-secondary)]">Nothing here yet.</p>
+    ) : (
+      <div class="mt-4 flex flex-col gap-4">
+        {posts.map((post) => (
+          <BlogPostCard
+            title={post.data.title}
+            date={post.data.pubDate}
+            description={post.data.description}
+            slug={post.id}
+          />
+        ))}
+      </div>
+    )}
+    <a href="/blog" class="mt-6 inline-block text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
+      All posts &rarr;
+    </a>
+  </section>
+
+  <hr class="border-[var(--color-border)]" />
+
+  <section class="py-8">
+    <h2 class="text-lg font-semibold text-[var(--color-heading)]">Work</h2>
+    <p class="mt-2 text-sm text-[var(--color-text-secondary)]">
+      Writing samples and docs tooling work.
+    </p>
+    <div class="mt-4 flex flex-col gap-3">
+      <a href="/samples/edge-deployment-cycle.pdf" download class="text-[var(--color-heading)] hover:text-[var(--color-link)] transition-colors">
+        Edge Deployment Lifecycle <span class="text-sm text-[var(--color-text-secondary)]">— Palette Edge's deployment lifecycle, with Excalidraw diagrams</span>
+      </a>
+      <a href="/samples/trusted-boot.pdf" download class="text-[var(--color-heading)] hover:text-[var(--color-link)] transition-colors">
+        Trusted Boot Keys <span class="text-sm text-[var(--color-text-secondary)]">— How Palette's Trusted Boot keys work and how to manage them</span>
+      </a>
+      <a href="https://docs.spectrocloud.com/security-bulletins/reports/#palette" class="text-[var(--color-heading)] hover:text-[var(--color-link)] transition-colors">
+        Palette Security Bulletin <span class="text-sm text-[var(--color-text-secondary)]">— Automated CVE publishing for Spectro Cloud releases</span>
+      </a>
+    </div>
+    <a href="/work" class="mt-6 inline-block text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
+      More details &rarr;
+    </a>
+  </section>
+</BaseLayout>

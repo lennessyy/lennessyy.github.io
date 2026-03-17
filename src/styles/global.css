@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+}
+
+/* Light mode (default) */
+:root {
+  --color-bg: #fafafa;
+  --color-surface: #f0f0f0;
+  --color-border: #e0e0e0;
+  --color-accent: #7c3aed;
+  --color-accent-hover: #6d28d9;
+  --color-accent-subtle: #ede9fe;
+  --color-link: #0891b2;
+  --color-link-hover: #0e7490;
+  --color-heading: #1a1a2e;
+  --color-text: #374151;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+}
+
+/* Dark mode */
+.dark {
+  --color-bg: #0f0a1a;
+  --color-surface: #1a1128;
+  --color-border: #352750;
+  --color-accent: #a78bfa;
+  --color-accent-hover: #c4b5fd;
+  --color-accent-subtle: #1e1533;
+  --color-link: #22d3ee;
+  --color-link-hover: #67e8f9;
+  --color-heading: #f0ecf7;
+  --color-text: #d1c4e9;
+  --color-text-secondary: #a193bf;
+  --color-text-tertiary: #6e5f8a;
+}
+
+/* Body text in Space Mono, headings stay Space Grotesk */
+p, li, td, th, blockquote, time, span, small {
+  font-family: 'Space Mono', ui-monospace, monospace;
+}
+
+/* Prose overrides */
+.prose {
+  --tw-prose-body: var(--color-text);
+  --tw-prose-headings: var(--color-heading);
+  --tw-prose-links: var(--color-link);
+  --tw-prose-bold: var(--color-heading);
+  --tw-prose-code: var(--color-accent);
+  --tw-prose-pre-bg: var(--color-surface);
+  --tw-prose-hr: var(--color-border);
+}
+
+/* Smooth transition for theme switch */
+html.transitioning,
+html.transitioning *,
+html.transitioning *::before,
+html.transitioning *::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
