@@ -1,0 +1,22 @@
+---
+title: "Why are there still technical writers?"
+description: "Some musings about my profession in the age of AI."
+pubDate: 2026-03-14
+tags: ["meta", "astro"]
+---
+
+These days, when I tell someone that I work in technical documentation, their first question to me is usually "how has AI changed your work"?, which to me, is really just a polite way of asking "how do you still have a job? why isn't it being done by AI yet"?
+
+Sometimes I find myself wondering the same thing. We writers do not have the acumen that ties products to business value like product managers, nor do we have the knowledge of the technical implementation of features like software engineers. In an era where the craft of writing seems increasingly mastered by large language models, what do we bring to the table?
+
+True, if our job were simply to produce words on a screen, then there is no hope left for this profession. But writing was never the job. Like every other profession, we are here to solve problems. The specific problem we are solving is to communicate to users how to use our products and services. More than writing, it's also worrying about tools, and delivery, and context. It's tirelessly empathizing with and advocating for the user every step of the way. I think this is fundamentally a different problem than the builders of these products and services are solving. And if I'm being honest with myself, perhaps the most accurate way to describe our value is this: someone has to care about docs, and we are the cheapest people you can pay to care.
+
+I know that sounds cynical and reductive. To be clear, I don't mean that good writers come cheaply — the combination of technical fluency (often previous dev experience if the job is developer docs) and communication/people skills that this job demands is still rare, and most tech companies pay accordingly. What I mean is that the alternative is asking someone who costs more (often PMs or engineers) to do the caring instead. It's not that they're incapable of caring. It's that caring is a function of attention, and attention is a function of what you're measured on. An engineer is measured on shipping features. A PM is measured on business outcomes tied to those features. Docs are, at best, adjacent to what either of them is rewarded for. You can ask them to care, but care without accountability eventually fades. Writers care because it's the whole job. There's nothing else to retreat to.
+
+And this sustained, specific caring produces something else that often gets overlooked: taste. Specifically, taste as pattern recognition — the ability to look at a page and immediately feel that something is wrong before you can articulate why. This comes from the [same place that any expert intuition comes from](https://www.youtube.com/watch?v=5eW6Eagr9XA). A senior engineer can glance at a code review and sense a bad abstraction. A writer can glance at a docs page and sense that a user is going to get lost at step three. This isn't a mystical gift. It's what happens when you've read and written and revised documentation thousands of times. You build an internal model of how people read instructions, where they stumble, what they skip, what they misunderstand.
+
+This is exactly the kind of judgment you need in order to use AI effectively for documentation. A language model can draft a page in seconds, but someone still has to look at the output and know whether it's actually good — not just grammatically correct, or even comprehensive, but good in the way that means a real person will read this and succeed.
+
+For now, I think the taste is still ours. In the future, who knows? In B2B SaaS especially, theoretically we could end up in a world where an AI agent writes the roadmaps, builds and ships the features, and writes the docs to teach another agent how to use them and build more software. Perhaps the only interaction it will have with humans is to make its owners more money.
+
+Until that day comes though, I will continue to nitpick Claude's work, remove unnecessary callouts it decided to add in odd places, ask it to disambiguate where it decided to gloss over important details, or eventually lose patience and decide to do it myself. I guess I will do this as long as it still feels good for me to be writing words, for it really does feel good to write them.
