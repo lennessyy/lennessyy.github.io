@@ -7,6 +7,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT = resolve(__dirname, '../src/data/reviews.json');
 const FEED_URL = 'https://letterboxd.com/lennessy/rss/';
 
+function decodeEntities(str) {
+  return String(str)
+    .replace(/&#039;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
+}
+
 async function fetchReviews() {
   const res = await fetch(FEED_URL);
   if (!res.ok) throw new Error(`Feed fetch failed: ${res.status}`);
@@ -36,14 +47,14 @@ async function fetchReviews() {
       .trim();
 
     return {
-      filmTitle: item['letterboxd:filmTitle'] || '',
+      filmTitle: decodeEntities(item['letterboxd:filmTitle'] || ''),
       filmYear: item['letterboxd:filmYear'] || null,
       rating: item['letterboxd:memberRating'] || null,
       watchedDate: item['letterboxd:watchedDate'] || '',
       reviewHtml: reviewHtml || null,
       reviewText: reviewText || null,
       letterboxdUrl: item.link || '',
-      slug: slugify(item['letterboxd:filmTitle'] || '', item['letterboxd:filmYear']),
+      slug: slugify(decodeEntities(item['letterboxd:filmTitle'] || ''), item['letterboxd:filmYear']),
     };
   });
 
