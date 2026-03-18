@@ -35,11 +35,9 @@ These are small things, but they have indeed added to my life, however modestly.
 
 On the third morning, I was still fresh with excitement and looking forward to my brief. 8:30 came and went. Nothing. I messaged Dylan and asked what happened. He said the model wasn't available — the LLM provider had returned an error.
 
-This kept happening. Sometimes it was the LLM timing out. Sometimes it was the Google API calls failing — `gog`, the CLI tool Dylan uses to talk to Google, would just hang for 30 seconds and give up. Dylan, being a diligent agent, would respond to these failures by increasing the timeout on the cron job. But things would keep timing out regardless. I had to increase the timeout at least three times, and it still didn't make the problems go away.
+This kept happening. Sometimes it was the LLM timing out. Sometimes it was the Google API calls failing — `gog`, the CLI tool Dylan uses to talk to Google, would just hang for 90 seconds and give up. Dylan, being a diligent agent, would respond to these failures by increasing the timeout on the cron job. But things would keep timing out regardless. I had to increase the timeout at least three times, and it still didn't make the problems go away.
 
-The failure rate settled at around 26%. More than one in four mornings, my brief just wouldn't show up. And because the entire pipeline ran as a single cron job, a failure at any step — fetching the calendar, fetching email, calling the LLM, sending the Telegram message — meant all the work from previous steps was lost. If the LLM call succeeded but Telegram was briefly down, the whole thing had to restart from scratch.
-
-I tried to explain to Dylan that he needed to handle retries more carefully, but the fundamental architecture was wrong. A cron job that shells out to a series of commands and hopes they all succeed in sequence is not a reliable system. No amount of timeout tuning changes that.
+The failure rate settled at around 31%. Almost one in three mornings, my brief just wouldn't show up. And because the entire pipeline ran as a single cron job, a failure at any step — fetching the calendar, fetching email, calling the LLM, sending the Telegram message — caused the whole loop to crash. Sometimes I get an error message coming through Telegram; most of the time I get nothing at all.
 
 ## Using Temporal to add reliability
 
