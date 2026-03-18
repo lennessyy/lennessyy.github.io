@@ -1,5 +1,5 @@
 ---
-title: "My OpenClaw agent failed to deliver my morning brief a third of the time, so I made it durable with Temporal"
+title: "My OpenClaw agent failed to deliver my morning brief one in three times, so I made it durable with Temporal"
 description: "An AI agent that calls free APIs will fail constantly. Temporal makes it reliable without rewriting the agent itself."
 pubDate: 2026-03-17
 tags: ["openclaw", "durable execution"]
