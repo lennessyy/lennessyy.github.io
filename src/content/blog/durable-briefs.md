@@ -75,7 +75,7 @@ This little spelunking journey I took hacking away at OpenClaw was the most fun 
 
 **Personal agents are still limited, but look hard enough and you'll find value.** I almost gave up on Dylan. The morning brief with its lunch check and USPS mail scans isn't going to change my life, but it genuinely makes my mornings a little better. Sometimes that's enough to justify the experiment.
 
-**Nothing is too simple to need reliability.** Five API calls in sequence will fail constantly when the APIs are free-tier and the network is a home NUC under a bed. I kept thinking the problem was timeouts and the fix was longer timeouts. The problem was that I had no retry or replay semantics at all.
+**Nothing is too simple to need reliability.** Five API calls in sequence will fail constantly when the APIs are free-tier and the network is a home NUC under a bed. I kept thinking the problem was timeouts and the fix was longer timeouts. But that alone will not save you. You need actual reliability. 
 
 **Temporal doesn't have to be hard.** The entire project is four TypeScript files. The Workflow is 20 lines. I vibe-coded the Workflow and Activity definitions with Claude in about 20 minutes, with very minimal changes on my part. Then I had Claude write an `AGENT.md` file explaining how to wire it up, handed the repo to Dylan, and he one-shot the integration with no additional input from me. (Dylan runs on MiniMax M2.5, for what it's worth.) Most of the value comes from Temporal's retry and replay guarantees, which you get just by defining Activities with timeout and retry policies. If your agent — or any pipeline — calls external services, this is the lowest-effort way I've found to make it stop failing.
 
