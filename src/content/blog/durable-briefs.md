@@ -41,7 +41,7 @@ The failure rate settled at around 31%. Almost one in three mornings, my brief j
 
 ## Using Temporal to add reliability
 
-I work at [Temporal](temporal.io). I write and maintain the documentation for a platform whose entire purpose is making exactly this kind of workflow reliable. And yet it took me weeks to reach for it, because I kept thinking: this is a five-step shell script, it's too simple to need Temporal.
+I work at [Temporal](https://temporal.io). I write and maintain the documentation for a platform whose entire purpose is making exactly this kind of workflow reliable. And yet it took me weeks to reach for it, because I kept thinking: this is a five-step shell script, it's too simple to need Temporal.
 
 Well, turns out it's not. 
 
@@ -71,7 +71,7 @@ Since switching, the brief has been delivered every single morning. Watching the
 
 ## Takeaways
 
-This little splunking journey I took hacking away at OpenClaw was the most fun I've had working on personal projects in a very long time. Here is what I learned:
+This little spelunking journey I took hacking away at OpenClaw was the most fun I've had working on personal projects in a very long time. Here is what I learned:
 
 **Personal agents are still limited, but look hard enough and you'll find value.** I almost gave up on Dylan. The morning brief with its lunch check and USPS mail scans isn't going to change my life, but it genuinely makes my mornings a little better. Sometimes that's enough to justify the experiment.
 
@@ -79,4 +79,4 @@ This little splunking journey I took hacking away at OpenClaw was the most fun I
 
 **Temporal doesn't have to be hard.** The entire project is four TypeScript files. The Workflow is 20 lines. I vibe-coded the Workflow and Activity definitions with Claude in about 20 minutes, with very minimal changes on my part. Then I had Claude write an `AGENT.md` file explaining how to wire it up, handed the repo to Dylan, and he one-shot the integration with no additional input from me. (Dylan runs on MiniMax M2.5, for what it's worth.) Most of the value comes from Temporal's retry and replay guarantees, which you get just by defining Activities with timeout and retry policies. If your agent — or any pipeline — calls external services, this is the lowest-effort way I've found to make it stop failing.
 
-Anyway, if you are experiencing the same issues with your agent, try adding durable execution -- I'd love to know how it works out for you (and on the off chance you read the docs and not your agent, let me know if you have any feedback as well). Lastly, if you've found a use case for OpenClaw that's actually stuck, however small, let me know too! I'd love to hear about it.
+Anyway, if you are experiencing the same issues with your agent, try adding durable execution — I'd love to know how it works out for you (and on the off chance you read the docs yourself instead having your agent read them, let me know if you have any feedback as well). Lastly, if you've found a use case for OpenClaw that's actually stuck, however small, let me know too! I'd love to hear about it.
