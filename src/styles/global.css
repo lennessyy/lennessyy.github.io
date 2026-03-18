@@ -46,17 +46,18 @@ p, li, td, th, blockquote, time, span, small {
 }
 
 /* Blockquote as aside, not quote */
-.prose blockquote {
+.prose :where(blockquote):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   font-style: normal;
   border-left: 2px solid var(--color-accent);
   background: var(--color-surface);
+  color: var(--color-text);
   padding: 0.75rem 1rem;
   border-radius: 0.25rem;
   quotes: none;
 }
 
-.prose blockquote p::before,
-.prose blockquote p::after {
+.prose :where(blockquote p):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+.prose :where(blockquote p):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
   content: none;
 }
 
