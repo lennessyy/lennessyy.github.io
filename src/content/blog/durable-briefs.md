@@ -73,7 +73,7 @@ Since switching, the brief has been delivered every single morning. Watching the
 
 This little splunk I took hacking away at OpenClaw was the most fun I've had working on personal projects in a very long time. Here is what I learned:
 
-**Agents are still limited, but look hard enough and you'll find value.** I almost gave up on Dylan. The morning brief with its lunch check and USPS mail scans isn't going to change my life, but it genuinely makes my mornings a little better. Sometimes that's enough to justify the experiment.
+**Personal agents are still limited, but look hard enough and you'll find value.** I almost gave up on Dylan. The morning brief with its lunch check and USPS mail scans isn't going to change my life, but it genuinely makes my mornings a little better. Sometimes that's enough to justify the experiment.
 
 **Nothing is too simple to need reliability.** Five API calls in sequence will fail constantly when the APIs are free-tier and the network is a home NUC under a bed. I kept thinking the problem was timeouts and the fix was longer timeouts. The problem was that I had no retry or replay semantics at all.
 
