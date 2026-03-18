@@ -15,7 +15,7 @@ I did what everyone does — I went online and browsed what other people were us
 
 I went through every suggestion. Most of them fell into one of two buckets: things I don't actually need automated, or things I can already do faster in ChatGPT or Claude — tools I'm already paying for and have open on my laptop all day. Dylan runs on API tokens, so every interaction burns tokens I have to pay for, and for anything conversational I'd rather just use the chatbot I already have a subscription to. The home automation stuff was a non-starter because I don't have smart lights or really any smart devices at all.
 
-> Side note/small rant: I saw some people say they have their agent summarize new videos or podcasts from their favorite content creator. The thought of doing doing irritated me so much. If it's a content creator you love why would you not just listen to the podcast or watch the video?  
+> Side note/small rant: I saw some people say they have their agent summarize new videos or podcasts from their favorite content creator. The thought of doing this irritated me so much. If it's a content creator you love, why would you not just listen to the podcasts or watch the videos?  
 
 The gap between "theoretically useful" and "actually saves me time in my specific life" turned out to be wide. Agents are impressive technology, but for me, running a headless AI on a box under my bed felt a bit like owning a sports car in a city with no highways.
 

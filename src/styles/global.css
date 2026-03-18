@@ -45,6 +45,21 @@ p, li, td, th, blockquote, time, span, small {
   font-family: 'Space Mono', ui-monospace, monospace;
 }
 
+/* Blockquote as aside, not quote */
+.prose blockquote {
+  font-style: normal;
+  border-left: 2px solid var(--color-accent);
+  background: var(--color-surface);
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  quotes: none;
+}
+
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: none;
+}
+
 /* Prose overrides */
 .prose {
   --tw-prose-body: var(--color-text);
