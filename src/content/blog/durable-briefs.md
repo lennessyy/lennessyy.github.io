@@ -71,7 +71,7 @@ Since switching, the brief has been delivered every single morning. Watching the
 
 ## Takeaways
 
-This little splunk I took hacking away at OpenClaw was the most fun I've had working on personal projects in a very long time. Here is what I learned:
+This little splunking journey I took hacking away at OpenClaw was the most fun I've had working on personal projects in a very long time. Here is what I learned:
 
 **Personal agents are still limited, but look hard enough and you'll find value.** I almost gave up on Dylan. The morning brief with its lunch check and USPS mail scans isn't going to change my life, but it genuinely makes my mornings a little better. Sometimes that's enough to justify the experiment.
 
