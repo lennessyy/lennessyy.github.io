@@ -24,9 +24,16 @@ const watchedDate = new Date(review.watchedDate);
 ---
 
 <BaseLayout title={`${review.filmTitle} — Lenny Chen`}>
-  <a href="/reviews" class="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
+  <a id="back-link" href="/reviews" class="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
     &larr; All reviews
   </a>
+  <script>
+    const back = sessionStorage.getItem('reviews-back');
+    if (back) {
+      const link = document.getElementById('back-link') as HTMLAnchorElement;
+      if (link) link.href = back;
+    }
+  </script>
 
   <header class="mt-6">
     <h1 class="text-2xl font-bold text-[var(--color-heading)]">

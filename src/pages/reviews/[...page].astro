@@ -79,3 +79,11 @@ function formatDate(dateStr: string): string {
     </nav>
   )}
 </BaseLayout>
+
+<script>
+  document.querySelectorAll('a[href^="/reviews/"]').forEach((link) => {
+    link.addEventListener('click', () => {
+      sessionStorage.setItem('reviews-back', window.location.href);
+    });
+  });
+</script>
