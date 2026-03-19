@@ -1,12 +1,23 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import reviews from '../../data/reviews.json';
+import reviewsData from '../../data/reviews.json';
+
+export function getStaticPaths({ paginate }: { paginate: Function }) {
+  return paginate(reviewsData, { pageSize: 10 });
+}
+
+const { page } = Astro.props;
 
 function stars(rating: number | null): string {
   if (!rating) return '';
   const full = Math.floor(rating);
   const half = rating % 1 >= 0.5;
   return '★'.repeat(full) + (half ? '½' : '');
+}
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 ---
 
@@ -17,7 +28,7 @@ function stars(rating: number | null): string {
   </p>
 
   <div class="mt-8 flex flex-col">
-    {reviews.map((r: any) => (
+    {page.data.map((r: any) => (
       <a
         href={r.reviewText ? `/reviews/${r.slug}` : r.letterboxdUrl}
         target={r.reviewText ? undefined : '_blank'}
@@ -34,12 +45,37 @@ function stars(rating: number | null): string {
             </span>
           )}
         </div>
-        {r.rating && (
-          <span class="shrink-0 text-sm text-[var(--color-accent)]">
-            {stars(r.rating)}
-          </span>
-        )}
+        <div class="shrink-0 flex items-baseline gap-2 text-sm">
+          {r.watchedDate && (
+            <span class="text-[var(--color-text-tertiary)]">{formatDate(r.watchedDate)}</span>
+          )}
+          {r.rating && (
+            <span class="text-[var(--color-accent)]">{stars(r.rating)}</span>
+          )}
+        </div>
       </a>
     ))}
   </div>
+
+  {page.lastPage > 1 && (
+    <nav class="mt-8 flex items-center justify-between text-sm">
+      {page.url.prev ? (
+        <a href={page.url.prev} class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
+          &larr; Newer
+        </a>
+      ) : (
+        <span />
+      )}
+      <span class="text-[var(--color-text-tertiary)]">
+        Page {page.currentPage} of {page.lastPage}
+      </span>
+      {page.url.next ? (
+        <a href={page.url.next} class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
+          Older &rarr;
+        </a>
+      ) : (
+        <span />
+      )}
+    </nav>
+  )}
 </BaseLayout>
