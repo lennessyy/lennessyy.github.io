@@ -33,7 +33,7 @@ jobs:
 
       - name: Post new reviews to Bluesky
         env:
-          BLUESKY_IDENTIFIER: ${{ secrets.BLUESKY_IDENTIFIER }}
+          BLUESKY_IDENTIFIER: ${{ vars.BLUESKY_IDENTIFIER }}
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
         run: node scripts/post-to-bluesky.mjs
 
