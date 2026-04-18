@@ -20,6 +20,7 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
+    "@atproto/api": "^0.13.28",
     "pdf-lib": "^1.17.1",
     "puppeteer": "^24.39.1"
   }
