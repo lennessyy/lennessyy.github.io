@@ -82,8 +82,56 @@ function buildPostTexts(review) {
   );
 }
 
-async function postThread(postTexts, watchedDate) {
-  const baseTime = new Date(watchedDate).getTime();
+function decodeEntities(str) {
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
+}
+
+async function fetchEmbed(url) {
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    const ogMeta = (prop) => {
+      const m = html.match(new RegExp(`<meta[^>]+property="${prop}"[^>]+content="([^"]+)"`, 'i'))
+        ?? html.match(new RegExp(`<meta[^>]+content="([^"]+)"[^>]+property="${prop}"`, 'i'));
+      return m ? decodeEntities(m[1]) : null;
+    };
+
+    const title = ogMeta('og:title');
+    const description = ogMeta('og:description');
+    const image = ogMeta('og:image');
+
+    if (!title) return null;
+
+    let thumb;
+    if (image) {
+      const imgRes = await fetch(image);
+      if (imgRes.ok) {
+        const bytes = new Uint8Array(await imgRes.arrayBuffer());
+        const encoding = imgRes.headers.get('content-type') ?? 'image/jpeg';
+        const { data } = await agent.uploadBlob(bytes, { encoding });
+        thumb = data.blob;
+      }
+    }
+
+    return {
+      $type: 'app.bsky.embed.external',
+      external: { uri: url, title, description: description ?? '', ...(thumb && { thumb }) },
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function postThread(postTexts, url) {
+  const embed = await fetchEmbed(url);
   let root = null;
   let parent = null;
 
@@ -94,8 +142,10 @@ async function postThread(postTexts, watchedDate) {
     const record = {
       text: rt.text,
       facets: rt.facets,
-      createdAt: new Date(baseTime + i * 1000).toISOString(),
+      createdAt: new Date(Date.now() + i * 1000).toISOString(),
     };
+
+    if (i === 0 && embed) record.embed = embed;
 
     if (parent) {
       record.reply = {
@@ -114,7 +164,7 @@ async function postThread(postTexts, watchedDate) {
 
 for (const review of toPost) {
   const postTexts = buildPostTexts(review);
-  await postThread(postTexts, review.watchedDate);
+  await postThread(postTexts, review.letterboxdUrl);
   postedSlugs.add(review.slug);
   console.log(`Posted: ${review.filmTitle} (${postTexts.length} post${postTexts.length > 1 ? 's' : ''})`);
   await new Promise(r => setTimeout(r, 1000));
