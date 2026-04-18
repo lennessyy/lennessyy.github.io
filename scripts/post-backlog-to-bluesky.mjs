@@ -1,12 +1,12 @@
 import { AtpAgent, RichText } from '@atproto/api';
-import { readFileSync, writeFileSync, appendFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = resolve(__dirname, '../src/data');
 const REVIEWS_FILE = resolve(DATA_DIR, 'reviews.json');
-const POSTED_FILE = resolve(DATA_DIR, 'bluesky-posted.json');
+const BACKLOG_FILE = resolve(DATA_DIR, 'bluesky-backlog.json');
 
 const { BLUESKY_IDENTIFIER, BLUESKY_APP_PASSWORD } = process.env;
 if (!BLUESKY_IDENTIFIER || !BLUESKY_APP_PASSWORD) {
@@ -14,21 +14,27 @@ if (!BLUESKY_IDENTIFIER || !BLUESKY_APP_PASSWORD) {
   process.exit(1);
 }
 
-const reviews = JSON.parse(readFileSync(REVIEWS_FILE, 'utf-8'));
+const backlog = JSON.parse(readFileSync(BACKLOG_FILE, 'utf-8'));
 
-let postedSlugs;
-try {
-  postedSlugs = new Set(JSON.parse(readFileSync(POSTED_FILE, 'utf-8')));
-} catch {
-  postedSlugs = new Set();
+if (backlog.totalPosted >= backlog.limit) {
+  console.log(`Backlog limit reached (${backlog.limit}).`);
+  process.exit(0);
 }
 
-const toPost = reviews.filter(r => r.reviewText && !postedSlugs.has(r.slug));
-
-if (toPost.length === 0) {
-  console.log('No new reviews to post.');
-  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'posted=false\n');
+if (backlog.queue.length === 0) {
+  console.log('Backlog queue is empty.');
   process.exit(0);
+}
+
+const reviews = JSON.parse(readFileSync(REVIEWS_FILE, 'utf-8'));
+const reviewMap = new Map(reviews.map(r => [r.slug, r]));
+
+const slug = backlog.queue[0];
+const review = reviewMap.get(slug);
+
+if (!review?.reviewText) {
+  console.error(`No review text found for ${slug}`);
+  process.exit(1);
 }
 
 const agent = new AtpAgent({ service: 'https://bsky.social' });
@@ -51,7 +57,6 @@ function buildChunks(text, firstCap, restCap) {
         chunks.push(current);
         cap = restCap;
       }
-      // Single sentence exceeds cap: fall back to word splitting
       if (sentence.length <= cap) {
         current = sentence;
       } else {
@@ -75,12 +80,8 @@ function buildPostTexts(review) {
   const LIMIT = 300;
   const urlSuffix = `\n\n${review.letterboxdUrl} 📽️`;
   const text = review.reviewText.trim().replace(/\s+/g, ' ');
-
   const chunks = buildChunks(text, LIMIT - urlSuffix.length, LIMIT);
-
-  return chunks.map((chunk, i) =>
-    i === 0 ? `${chunk}${urlSuffix}` : chunk
-  );
+  return chunks.map((chunk, i) => i === 0 ? `${chunk}${urlSuffix}` : chunk);
 }
 
 function decodeEntities(str) {
@@ -108,7 +109,6 @@ async function fetchEmbed(url) {
     const title = ogMeta('og:title');
     const description = ogMeta('og:description');
     const image = ogMeta('og:image');
-
     if (!title) return null;
 
     let thumb;
@@ -163,14 +163,11 @@ async function postThread(postTexts, url) {
   }
 }
 
-for (const review of toPost) {
-  const postTexts = buildPostTexts(review);
-  await postThread(postTexts, review.letterboxdUrl);
-  postedSlugs.add(review.slug);
-  console.log(`Posted: ${review.filmTitle} (${postTexts.length} post${postTexts.length > 1 ? 's' : ''})`);
-  await new Promise(r => setTimeout(r, 1000));
-}
+const postTexts = buildPostTexts(review);
+await postThread(postTexts, review.letterboxdUrl);
 
-writeFileSync(POSTED_FILE, JSON.stringify([...postedSlugs], null, 2));
-console.log(`Done. Posted ${toPost.length} review(s).`);
-if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'posted=true\n');
+backlog.queue.shift();
+backlog.totalPosted++;
+writeFileSync(BACKLOG_FILE, JSON.stringify(backlog, null, 2));
+
+console.log(`Backlog posted: ${review.filmTitle} (${postTexts.length} post${postTexts.length > 1 ? 's' : ''}) [${backlog.totalPosted}/${backlog.limit}]`);

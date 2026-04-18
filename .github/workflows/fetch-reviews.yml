@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.commit.outputs.changed }}
+      posted: ${{ steps.post-bluesky.outputs.posted }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,6 +33,7 @@ jobs:
         run: node scripts/fetch-reviews.mjs
 
       - name: Post new reviews to Bluesky
+        id: post-bluesky
         env:
           BLUESKY_IDENTIFIER: ${{ vars.BLUESKY_IDENTIFIER }}
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
@@ -49,6 +51,39 @@ jobs:
             git commit -m "Update Letterboxd reviews"
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  backlog:
+    needs: fetch
+    if: needs.fetch.outputs.posted != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Post backlog review to Bluesky
+        env:
+          BLUESKY_IDENTIFIER: ${{ vars.BLUESKY_IDENTIFIER }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+        run: node scripts/post-backlog-to-bluesky.mjs
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/bluesky-backlog.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update Bluesky backlog"
+            git push
           fi
 
   deploy:
