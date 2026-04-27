@@ -32,9 +32,11 @@ const reviewMap = new Map(reviews.map(r => [r.slug, r]));
 const slug = backlog.queue[0];
 const review = reviewMap.get(slug);
 
-if (!review?.reviewText) {
-  console.error(`No review text found for ${slug}`);
-  process.exit(1);
+if (!review?.filmTitle || !review?.reviewText) {
+  console.log(`Skipping ${slug}: not a film review.`);
+  backlog.queue.shift();
+  writeFileSync(BACKLOG_FILE, JSON.stringify(backlog, null, 2));
+  process.exit(0);
 }
 
 const agent = new AtpAgent({ service: 'https://bsky.social' });

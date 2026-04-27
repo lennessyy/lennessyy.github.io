@@ -34,7 +34,9 @@ async function fetchReviews() {
     return;
   }
 
-  const reviews = (Array.isArray(items) ? items : [items]).map((item) => {
+  const reviews = (Array.isArray(items) ? items : [items])
+    .filter((item) => item['letterboxd:filmTitle'])
+    .map((item) => {
     // Strip HTML tags from description for plain text excerpt
     const rawDesc = item.description || '';
     const reviewHtml = rawDesc

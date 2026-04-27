@@ -23,7 +23,7 @@ try {
   postedSlugs = new Set();
 }
 
-const toPost = reviews.filter(r => r.reviewText && !postedSlugs.has(r.slug));
+const toPost = reviews.filter(r => r.filmTitle && r.reviewText && !postedSlugs.has(r.slug));
 
 if (toPost.length === 0) {
   console.log('No new reviews to post.');
