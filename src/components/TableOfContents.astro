@@ -1,0 +1,70 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const filtered = headings.filter((h) => h.depth <= 3);
+---
+
+{filtered.length >= 3 && (
+  <nav class="toc hidden xl:block fixed w-52" style="left: calc(50% + 22rem); top: 30vh;">
+    <ul class="space-y-2.5 border-l border-[var(--color-border)] pl-4">
+      {filtered.map((h) => (
+        <li class:list={[h.depth === 3 && 'ml-3']}>
+          <a
+            href={`#${h.slug}`}
+            class="toc-link block font-sans text-xs leading-snug text-[var(--color-text-secondary)] hover:text-[var(--color-heading)] transition-colors duration-150"
+            data-slug={h.slug}
+          >
+            {h.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<script>
+  (function () {
+    const nav = document.querySelector<HTMLElement>('.toc');
+    if (!nav) return;
+
+    const links = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+    const slugs = Array.from(links).map((l) => l.dataset.slug!);
+    const headingEls = slugs
+      .map((s) => document.getElementById(s))
+      .filter(Boolean) as HTMLElement[];
+
+    const startPx = window.innerHeight * 0.3;
+    const restPx = 48;
+    const scrollThreshold = 300;
+
+    function update() {
+      const t = Math.min(window.scrollY / scrollThreshold, 1);
+      const current = startPx - (startPx - restPx) * t;
+      nav.style.top = `${current}px`;
+
+      let active = slugs[0];
+      for (const el of headingEls) {
+        if (el.getBoundingClientRect().top <= 80) {
+          active = el.id;
+        }
+      }
+      for (const link of links) {
+        const isActive = link.dataset.slug === active;
+        link.classList.toggle('text-[var(--color-heading)]', isActive);
+        link.classList.toggle('text-[var(--color-text-secondary)]', !isActive);
+      }
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+</script>
