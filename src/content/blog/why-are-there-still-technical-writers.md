@@ -2,7 +2,6 @@
 title: "Why are there still technical writers?"
 description: "Some musings about my profession in the age of AI."
 pubDate: 2026-03-14
-tags: ["meta", "astro"]
 ---
 
 These days, when I tell someone that I work in technical documentation, their first question to me is usually "how has AI changed your work"?, which to me, is really just a polite way of asking "how do you still have a job? why isn't it being done by AI yet"?

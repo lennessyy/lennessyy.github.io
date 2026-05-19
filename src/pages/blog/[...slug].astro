@@ -14,6 +14,6 @@ const { post } = Astro.props;
 const { Content, headings } = await render(post);
 ---
 
-<BlogPostLayout frontmatter={{ ...post.data, pubDate: post.data.pubDate.toISOString() }} headings={headings}>
+<BlogPostLayout frontmatter={{ ...post.data, pubDate: post.data.pubDate.toISOString(), narrative: post.data.narrative }} headings={headings}>
   <Content />
 </BlogPostLayout>
