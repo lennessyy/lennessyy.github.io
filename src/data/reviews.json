@@ -1,5 +1,15 @@
 [
   {
+    "filmTitle": "Dead to Rights",
+    "filmYear": 2025,
+    "rating": 4.5,
+    "watchedDate": "2026-05-18",
+    "reviewHtml": "<p></p> <p>My reviews generally have too much levity to discuss this. Gonna have be a diary entry for this one.</p>",
+    "reviewText": "My reviews generally have too much levity to discuss this. Gonna have be a diary entry for this one.",
+    "letterboxdUrl": "https://letterboxd.com/lennessy/film/dead-to-rights-2025/",
+    "slug": "dead-to-rights-2025"
+  },
+  {
     "filmTitle": "Top Gun",
     "filmYear": 1986,
     "rating": 1.5,
