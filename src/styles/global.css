@@ -61,6 +61,11 @@ p, li, td, th, blockquote, time, span, small {
   content: none;
 }
 
+/* Figcaption */
+.prose figcaption {
+  color: var(--color-text-secondary);
+}
+
 /* Prose overrides */
 .prose {
   --tw-prose-body: var(--color-text);
@@ -92,7 +97,7 @@ p, li, td, th, blockquote, time, span, small {
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
   letter-spacing: 0.05em;
 
 }
