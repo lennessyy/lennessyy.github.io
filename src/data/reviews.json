@@ -1,5 +1,15 @@
 [
   {
+    "filmTitle": "Citizen Kane",
+    "filmYear": 1941,
+    "rating": 5,
+    "watchedDate": "2026-05-23",
+    "reviewHtml": "<p></p> <p>It’s embarrassing of me to not have watched this until now, and I’m so glad I finally did. Even after disregarding all the technical aspects this film was pioneering, it is no less a true classic. It’s impressive to me when a film from the 90s ages well; I can’t imagine the prescience and taste it takes to tell a story that still feels fresh after almost an entire century. </p><p>I spent some time thinking about how meta it was that I completely missed how significant the earliest scenes of Charles being separated from his parents was. I wondered if the whole viewing would have registered differently if I had the context of a 1941 audience. In the end I concluded it didn’t matter. Like everyone else I was most drawn to Charles Kane the newsman, the egotist, the strongman, and not the simplistic and most consequential aspect of his identity. The mere fact that an 85-year-old movie taught me something new - that no matter how grand and influential someone is, their Rosebud is probably no more dramatic than our own, and however quotidian a life is, few will get to know their Rosebud nonetheless - feels almost surreal. </p><p>Also, I am not sure if it’s the context of knowing this was made before WWII, but there is a unique sense of reverence and humility that feel long lost to American films made in the post-war eras. What a film. I’m in awe.</p>",
+    "reviewText": "It’s embarrassing of me to not have watched this until now, and I’m so glad I finally did. Even after disregarding all the technical aspects this film was pioneering, it is no less a true classic. It’s impressive to me when a film from the 90s ages well; I can’t imagine the prescience and taste it takes to tell a story that still feels fresh after almost an entire century. I spent some time thinking about how meta it was that I completely missed how significant the earliest scenes of Charles being separated from his parents was. I wondered if the whole viewing would have registered differently if I had the context of a 1941 audience. In the end I concluded it didn’t matter. Like everyone else I was most drawn to Charles Kane the newsman, the egotist, the strongman, and not the simplistic and most consequential aspect of his identity. The mere fact that an 85-year-old movie taught me something new - that no matter how grand and influential someone is, their Rosebud is probably no more dramatic than our own, and however quotidian a life is, few will get to know their Rosebud nonetheless - feels almost surreal. Also, I am not sure if it’s the context of knowing this was made before WWII, but there is a unique sense of reverence and humility that feel long lost to American films made in the post-war eras. What a film. I’m in awe.",
+    "letterboxdUrl": "https://letterboxd.com/lennessy/film/citizen-kane/",
+    "slug": "citizen-kane-1941"
+  },
+  {
     "filmTitle": "undertone",
     "filmYear": 2025,
     "rating": 2.5,
