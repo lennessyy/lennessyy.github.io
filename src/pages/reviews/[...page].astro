@@ -19,6 +19,18 @@ function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
+
+const searchableReviews = reviewsData.map((review) => ({
+  filmTitle: review.filmTitle,
+  filmYear: review.filmYear,
+  rating: review.rating,
+  watchedDate: review.watchedDate,
+  reviewText: review.reviewText,
+  letterboxdUrl: review.letterboxdUrl,
+  slug: review.slug,
+  hasLocalReview: Boolean(review.reviewText),
+}));
+const searchDataJson = JSON.stringify(searchableReviews).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout title="Reviews — Lenny Chen">
@@ -27,7 +39,21 @@ function formatDate(dateStr: string): string {
     Pulled from my <a href="https://letterboxd.com/lennessy/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-link)] hover:text-[var(--color-link-hover)] underline transition-colors">Letterboxd</a>.
   </p>
 
-  <div class="mt-8 flex flex-col">
+  <div class="mt-8">
+    <label for="review-search" class="sr-only">Search film reviews</label>
+    <input
+      id="review-search"
+      type="search"
+      autocomplete="off"
+      placeholder="Search reviews"
+      class="w-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 font-mono text-sm text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)]"
+    />
+    <p id="review-search-count" class="mt-2 hidden text-xs text-[var(--color-text-tertiary)]" aria-live="polite"></p>
+  </div>
+
+  <div id="review-search-results" class="mt-6 hidden flex-col"></div>
+
+  <div id="review-list" class="mt-8 flex flex-col">
     {page.data.map((r: any) => (
       <a
         href={r.reviewText ? `/reviews/${r.slug}` : r.letterboxdUrl}
@@ -36,7 +62,7 @@ function formatDate(dateStr: string): string {
         class="group flex items-baseline justify-between gap-4 border-b border-[var(--color-border)] py-3 first:border-t"
       >
         <div class="flex items-baseline gap-2 min-w-0">
-          <span class="font-medium text-[var(--color-heading)] group-hover:text-[var(--color-link)] transition-colors truncate">
+          <span class="font-sans font-medium text-[var(--color-heading)] group-hover:text-[var(--color-link)] transition-colors truncate">
             {r.filmTitle}
           </span>
           {r.filmYear && (
@@ -58,7 +84,7 @@ function formatDate(dateStr: string): string {
   </div>
 
   {page.lastPage > 1 && (
-    <nav class="mt-8 flex items-center justify-between text-sm">
+    <nav id="review-pagination" class="mt-8 flex items-center justify-between text-sm">
       {page.url.prev ? (
         <a href={page.url.prev} class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
           &larr; Newer
@@ -78,12 +104,160 @@ function formatDate(dateStr: string): string {
       )}
     </nav>
   )}
+
+  <script type="application/json" id="reviews-search-data" set:html={searchDataJson} />
 </BaseLayout>
 
 <script>
-  document.querySelectorAll('a[href^="/reviews/"]').forEach((link) => {
-    link.addEventListener('click', () => {
-      sessionStorage.setItem('reviews-back', window.location.href);
+  type Review = {
+    filmTitle: string;
+    filmYear: number | null;
+    rating: number | null;
+    watchedDate: string;
+    reviewText: string;
+    letterboxdUrl: string;
+    slug: string;
+    hasLocalReview: boolean;
+  };
+
+  const searchInput = document.getElementById('review-search') as HTMLInputElement | null;
+  const searchResults = document.getElementById('review-search-results');
+  const searchCount = document.getElementById('review-search-count');
+  const reviewList = document.getElementById('review-list');
+  const pagination = document.getElementById('review-pagination');
+  const reviewsDataEl = document.getElementById('reviews-search-data');
+
+  const reviews: Review[] = reviewsDataEl?.textContent ? JSON.parse(reviewsDataEl.textContent) : [];
+  const resultClasses = [
+    'group',
+    'flex',
+    'items-baseline',
+    'justify-between',
+    'gap-4',
+    'border-b',
+    'border-[var(--color-border)]',
+    'py-3',
+    'first:border-t',
+  ];
+
+  function stars(rating: number | null): string {
+    if (!rating) return '';
+    const full = Math.floor(rating);
+    const half = rating % 1 >= 0.5;
+    return '★'.repeat(full) + (half ? '½' : '');
+  }
+
+  function formatDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function normalize(value: unknown): string {
+    return String(value ?? '').toLowerCase();
+  }
+
+  function getReviewUrl(review: Review): string {
+    return review.hasLocalReview ? `/reviews/${review.slug}` : review.letterboxdUrl;
+  }
+
+  function createReviewLink(review: Review): HTMLAnchorElement {
+    const link = document.createElement('a');
+    link.href = getReviewUrl(review);
+    link.classList.add(...resultClasses);
+
+    if (!review.hasLocalReview) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'flex items-baseline gap-2 min-w-0';
+
+    const title = document.createElement('span');
+    title.className = 'font-sans font-medium text-[var(--color-heading)] group-hover:text-[var(--color-link)] transition-colors truncate';
+    title.textContent = review.filmTitle;
+    titleWrap.append(title);
+
+    if (review.filmYear) {
+      const year = document.createElement('span');
+      year.className = 'shrink-0 text-sm text-[var(--color-text-tertiary)]';
+      year.textContent = `(${review.filmYear})`;
+      titleWrap.append(year);
+    }
+
+    const meta = document.createElement('div');
+    meta.className = 'shrink-0 flex items-baseline gap-2 text-sm';
+
+    if (review.watchedDate) {
+      const date = document.createElement('span');
+      date.className = 'text-[var(--color-text-tertiary)]';
+      date.textContent = formatDate(review.watchedDate);
+      meta.append(date);
+    }
+
+    if (review.rating) {
+      const rating = document.createElement('span');
+      rating.className = 'text-[var(--color-accent)]';
+      rating.textContent = stars(review.rating);
+      meta.append(rating);
+    }
+
+    link.append(titleWrap, meta);
+    return link;
+  }
+
+  function attachBackLinkStorage(root: ParentNode = document) {
+    root.querySelectorAll('a[href^="/reviews/"]').forEach((link) => {
+      link.addEventListener('click', () => {
+        sessionStorage.setItem('reviews-back', window.location.href);
+      });
     });
-  });
+  }
+
+  function updateSearch() {
+    if (!searchInput || !searchResults || !searchCount || !reviewList) return;
+
+    const query = searchInput.value.trim().toLowerCase();
+    const isSearching = query.length > 0;
+
+    reviewList.classList.toggle('hidden', isSearching);
+    pagination?.classList.toggle('hidden', isSearching);
+    searchResults.classList.toggle('hidden', !isSearching);
+    searchResults.classList.toggle('flex', isSearching);
+    searchCount.classList.toggle('hidden', !isSearching);
+
+    if (!isSearching) {
+      searchResults.replaceChildren();
+      searchCount.textContent = '';
+      return;
+    }
+
+    const matches = reviews.filter((review) => {
+      const haystack = [
+        review.filmTitle,
+        review.filmYear,
+        review.rating,
+        review.watchedDate,
+        review.reviewText,
+      ].map(normalize).join(' ');
+
+      return haystack.includes(query);
+    });
+
+    searchResults.replaceChildren(...matches.map(createReviewLink));
+    attachBackLinkStorage(searchResults);
+
+    searchCount.textContent = `${matches.length} ${matches.length === 1 ? 'review' : 'reviews'} found`;
+
+    if (matches.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'border-y border-[var(--color-border)] py-6 text-sm text-[var(--color-text-secondary)]';
+      empty.textContent = 'No reviews found.';
+      searchResults.append(empty);
+    }
+  }
+
+  searchInput?.addEventListener('input', updateSearch);
+
+  attachBackLinkStorage();
 </script>

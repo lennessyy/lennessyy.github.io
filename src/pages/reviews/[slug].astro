@@ -21,6 +21,23 @@ function stars(rating: number | null): string {
 }
 
 const watchedDate = new Date(review.watchedDate);
+
+function formatInlineMarkdown(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^\*])\*([^*]+)\*/g, '$1<em>$2</em>');
+}
+
+function formatReviewHtml(html: string | null): string {
+  if (!html) return '';
+
+  return html
+    .split(/(<[^>]+>)/g)
+    .map((part) => part.startsWith('<') ? part : formatInlineMarkdown(part))
+    .join('');
+}
+
+const reviewHtml = formatReviewHtml(review.reviewHtml);
 ---
 
 <BaseLayout title={`${review.filmTitle} — Lenny Chen`}>
@@ -52,7 +69,7 @@ const watchedDate = new Date(review.watchedDate);
     </div>
   </header>
 
-  <div class="mt-6 space-y-4 leading-relaxed" set:html={review.reviewHtml} />
+  <div class="prose mt-6 max-w-none" set:html={reviewHtml} />
 
   <p class="mt-8">
     <a
