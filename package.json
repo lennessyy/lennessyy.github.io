@@ -15,7 +15,7 @@
     "@astrojs/markdown-remark": "^7.2.0",
     "@astrojs/sitemap": "^3.7.3",
     "@tailwindcss/typography": "^0.5.19",
-    "@tailwindcss/vite": "^4.2.1",
+    "@tailwindcss/vite": "^4.3.1",
     "astro": "^7.0.2",
     "fast-xml-parser": "^5.7.0",
     "remark-figure-caption": "^1.0.6",
