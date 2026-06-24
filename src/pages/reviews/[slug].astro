@@ -21,6 +21,10 @@ function stars(rating: number | null): string {
 }
 
 const watchedDate = new Date(review.watchedDate);
+const renderedStars = stars(review.rating);
+const reviewDescription = renderedStars
+  ? `A ${renderedStars} review of ${review.filmTitle} by Lenny Chen.`
+  : `A review of ${review.filmTitle} by Lenny Chen.`;
 
 function formatInlineMarkdown(text: string): string {
   return text
@@ -40,7 +44,7 @@ function formatReviewHtml(html: string | null): string {
 const reviewHtml = formatReviewHtml(review.reviewHtml);
 ---
 
-<BaseLayout title={`${review.filmTitle} — Lenny Chen`}>
+<BaseLayout title={`${review.filmTitle} — Lenny Chen`} description={reviewDescription}>
   <a id="back-link" href="/reviews" class="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
     &larr; All reviews
   </a>

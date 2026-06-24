@@ -33,7 +33,10 @@ const searchableReviews = reviewsData.map((review) => ({
 const searchDataJson = JSON.stringify(searchableReviews).replace(/</g, '\\u003c');
 ---
 
-<BaseLayout title="Reviews — Lenny Chen">
+<BaseLayout
+  title="Reviews — Lenny Chen"
+  description="Film reviews by Lenny Chen, pulled from Letterboxd."
+>
   <h1 class="text-2xl font-bold text-[var(--color-heading)]">Film reviews</h1>
   <p class="mt-2 text-sm text-[var(--color-text-secondary)]">
     Pulled from my <a href="https://letterboxd.com/lennessy/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-link)] hover:text-[var(--color-link-hover)] underline transition-colors">Letterboxd</a>.
