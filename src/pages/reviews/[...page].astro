@@ -43,18 +43,54 @@ const searchDataJson = JSON.stringify(searchableReviews).replace(/</g, '\\u003c'
   </p>
 
   <div class="mt-8">
-    <label for="review-search" class="sr-only">Search film reviews</label>
-    <input
-      id="review-search"
-      type="search"
-      autocomplete="off"
-      placeholder="Search reviews"
-      class="w-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 font-mono text-sm text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)]"
-    />
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <label for="review-search" class="sr-only">Search film reviews</label>
+      <input
+        id="review-search"
+        type="search"
+        autocomplete="off"
+        placeholder="Search reviews"
+        class="min-w-0 flex-1 border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 font-mono text-sm text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)]"
+      />
+      <button
+        id="review-roulette-open"
+        type="button"
+        class="border border-[var(--color-accent)] bg-[var(--color-accent-subtle)] px-4 py-2 font-mono text-sm font-bold text-[var(--color-accent)] transition-colors hover:border-[var(--color-accent-hover)] hover:text-[var(--color-accent-hover)]"
+      >
+        Review roulette
+      </button>
+    </div>
     <p id="review-search-count" class="mt-2 hidden text-xs text-[var(--color-text-tertiary)]" aria-live="polite"></p>
   </div>
 
   <div id="review-search-results" class="mt-6 hidden flex-col"></div>
+
+  <div id="review-roulette" class="mt-8 hidden border-y border-[var(--color-border)] py-6" aria-live="polite">
+    <p class="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-accent)]">Review roulette</p>
+    <div class="mt-4 min-h-32">
+      <p id="roulette-film" class="font-sans text-3xl font-bold leading-none text-[var(--color-heading)] break-words">Ready?</p>
+      <p id="roulette-meta" class="mt-3 text-sm text-[var(--color-text-secondary)]">Click randomize and see where you land.</p>
+    </div>
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <button
+        id="roulette-spin"
+        class="border border-[var(--color-heading)] bg-[var(--color-heading)] px-4 py-2 font-mono text-sm font-bold text-[var(--color-bg)] transition-transform hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0"
+        type="button"
+      >
+        Randomize
+      </button>
+      <a id="roulette-result-link" class="hidden border border-[var(--color-border)] px-4 py-2 font-mono text-sm font-bold text-[var(--color-heading)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]" href="/reviews">
+        Read review
+      </a>
+      <button
+        id="review-roulette-close"
+        type="button"
+        class="px-0 py-2 font-mono text-sm text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-heading)]"
+      >
+        Back to list
+      </button>
+    </div>
+  </div>
 
   <div id="review-list" class="mt-8 flex flex-col">
     {page.data.map((r: any) => (
@@ -129,8 +165,16 @@ const searchDataJson = JSON.stringify(searchableReviews).replace(/</g, '\\u003c'
   const reviewList = document.getElementById('review-list');
   const pagination = document.getElementById('review-pagination');
   const reviewsDataEl = document.getElementById('reviews-search-data');
+  const rouletteOpen = document.getElementById('review-roulette-open') as HTMLButtonElement | null;
+  const roulette = document.getElementById('review-roulette');
+  const rouletteClose = document.getElementById('review-roulette-close') as HTMLButtonElement | null;
+  const rouletteSpin = document.getElementById('roulette-spin') as HTMLButtonElement | null;
+  const rouletteFilm = document.getElementById('roulette-film');
+  const rouletteMeta = document.getElementById('roulette-meta');
+  const rouletteResultLink = document.getElementById('roulette-result-link') as HTMLAnchorElement | null;
 
   const reviews: Review[] = reviewsDataEl?.textContent ? JSON.parse(reviewsDataEl.textContent) : [];
+  let rouletteRun = 0;
   const resultClasses = [
     'group',
     'flex',
@@ -161,6 +205,16 @@ const searchDataJson = JSON.stringify(searchableReviews).replace(/</g, '\\u003c'
 
   function getReviewUrl(review: Review): string {
     return review.hasLocalReview ? `/reviews/${review.slug}` : review.letterboxdUrl;
+  }
+
+  function describeReview(review: Review): string {
+    const details = [
+      review.filmYear ? String(review.filmYear) : '',
+      review.rating ? stars(review.rating) : '',
+      review.watchedDate ? formatDate(review.watchedDate) : '',
+    ].filter(Boolean);
+
+    return details.join(' · ');
   }
 
   function createReviewLink(review: Review): HTMLAnchorElement {
@@ -223,6 +277,7 @@ const searchDataJson = JSON.stringify(searchableReviews).replace(/</g, '\\u003c'
     const query = searchInput.value.trim().toLowerCase();
     const isSearching = query.length > 0;
 
+    roulette?.classList.add('hidden');
     reviewList.classList.toggle('hidden', isSearching);
     pagination?.classList.toggle('hidden', isSearching);
     searchResults.classList.toggle('hidden', !isSearching);
@@ -260,7 +315,115 @@ const searchDataJson = JSON.stringify(searchableReviews).replace(/</g, '\\u003c'
     }
   }
 
+  function setRouletteReview(review: Review) {
+    if (!rouletteFilm || !rouletteMeta) return;
+
+    rouletteFilm.textContent = review.filmTitle;
+    rouletteMeta.textContent = describeReview(review);
+  }
+
+  function resetRouletteResult() {
+    rouletteResultLink?.classList.add('hidden');
+
+    if (rouletteResultLink) {
+      rouletteResultLink.href = '/reviews';
+      rouletteResultLink.removeAttribute('target');
+      rouletteResultLink.removeAttribute('rel');
+    }
+  }
+
+  function openRoulette() {
+    if (!roulette) return;
+
+    searchInput?.blur();
+    if (searchInput) searchInput.value = '';
+    searchResults?.replaceChildren();
+    searchResults?.classList.add('hidden');
+    searchResults?.classList.remove('flex');
+    searchCount?.classList.add('hidden');
+    if (searchCount) searchCount.textContent = '';
+    reviewList?.classList.add('hidden');
+    pagination?.classList.add('hidden');
+    roulette.classList.remove('hidden');
+    resetRouletteResult();
+    rouletteRun += 1;
+    rouletteSpin?.focus();
+  }
+
+  function closeRoulette() {
+    if (!roulette) return;
+
+    roulette.classList.add('hidden');
+    reviewList?.classList.remove('hidden');
+    pagination?.classList.remove('hidden');
+    rouletteSpin?.removeAttribute('disabled');
+    rouletteRun += 1;
+    rouletteOpen?.focus();
+  }
+
+  function finishRoulette(review: Review) {
+    rouletteSpin?.removeAttribute('disabled');
+    setRouletteReview(review);
+
+    if (!rouletteResultLink) return;
+
+    rouletteResultLink.href = getReviewUrl(review);
+    rouletteResultLink.classList.remove('hidden');
+
+    if (!review.hasLocalReview) {
+      rouletteResultLink.target = '_blank';
+      rouletteResultLink.rel = 'noopener noreferrer';
+    } else {
+      rouletteResultLink.removeAttribute('target');
+      rouletteResultLink.removeAttribute('rel');
+    }
+  }
+
+  function spinRoulette() {
+    if (!reviews.length || !rouletteSpin) return;
+
+    resetRouletteResult();
+    rouletteSpin.disabled = true;
+
+    rouletteRun += 1;
+    const runId = rouletteRun;
+    const target = reviews[Math.floor(Math.random() * reviews.length)];
+    const steps = 24 + Math.floor(Math.random() * 10);
+    let index = 0;
+
+    function tick() {
+      if (runId !== rouletteRun) return;
+
+      const isFinalStep = index >= steps;
+      const review = isFinalStep
+        ? target
+        : reviews[Math.floor(Math.random() * reviews.length)];
+
+      setRouletteReview(review);
+
+      if (isFinalStep) {
+        finishRoulette(target);
+        return;
+      }
+
+      index += 1;
+      const progress = index / steps;
+      const delay = 34 + Math.pow(progress, 2.4) * 210;
+      window.setTimeout(tick, delay);
+    }
+
+    tick();
+  }
+
   searchInput?.addEventListener('input', updateSearch);
+  rouletteOpen?.addEventListener('click', openRoulette);
+  rouletteClose?.addEventListener('click', closeRoulette);
+  rouletteSpin?.addEventListener('click', spinRoulette);
+  rouletteResultLink?.addEventListener('click', () => {
+    if (rouletteResultLink.getAttribute('href')?.startsWith('/reviews/')) {
+      sessionStorage.setItem('reviews-back', window.location.href);
+    }
+  });
 
   attachBackLinkStorage();
 </script>
