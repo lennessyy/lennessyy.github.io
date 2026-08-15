@@ -15,6 +15,7 @@ function decodeEntities(str) {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#x27;/g, "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
 }
 
@@ -44,9 +45,13 @@ async function fetchReviews() {
       .replace(/<p>Watched on .*?<\/p>/g, '') // remove "Watched on" line
       .trim();
 
-    const reviewText = reviewHtml
+    const reviewText = decodeEntities(reviewHtml
+      // Preserve separation between HTML blocks before removing their tags.
+      .replace(/<\/?(?:p|div|blockquote|li|h[1-6])\b[^>]*>/gi, ' ')
+      .replace(/<br\s*\/?\s*>/gi, ' ')
       .replace(/<[^>]+>/g, '')
-      .trim();
+      .replace(/\s+/g, ' ')
+      .trim());
 
     return {
       filmTitle: decodeEntities(item['letterboxd:filmTitle'] || ''),

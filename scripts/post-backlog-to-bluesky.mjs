@@ -81,7 +81,7 @@ function buildChunks(text, firstCap, restCap) {
 function buildPostTexts(review) {
   const LIMIT = 300;
   const urlSuffix = `\n\n${review.letterboxdUrl} 📽️`;
-  const text = review.reviewText.trim().replace(/\s+/g, ' ');
+  const text = decodeEntities(review.reviewText).trim().replace(/\s+/g, ' ');
   const chunks = buildChunks(text, LIMIT - urlSuffix.length, LIMIT);
   return chunks.map((chunk, i) => i === 0 ? `${chunk}${urlSuffix}` : chunk);
 }
@@ -93,6 +93,7 @@ function decodeEntities(str) {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
 }
 
