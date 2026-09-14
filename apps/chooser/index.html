@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#f7efdf" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Fingies" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="description" content="Put your fingers down. Let fate pick one." />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="icon" href="./icons/favicon.svg" type="image/svg+xml" />
+    <title>Fingies — random finger chooser</title>
+  </head>
+  <body>
+    <main class="app" id="app">
+      <div class="ambient ambient-one" aria-hidden="true"></div>
+      <div class="ambient ambient-two" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Fingies home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>fingies!</span>
+        </a>
+        <button class="info-button" id="infoButton" type="button" aria-label="How to install Fingies">i</button>
+      </header>
+
+      <section class="hero" aria-live="polite">
+        <p class="eyebrow" id="eyebrow">THE TINIEST DECISION MAKER</p>
+        <h1 id="headline">Put your<br /><em>fingers</em> down</h1>
+        <p class="subhead" id="subhead">Two or more, please. Hold still<br />and let fate do its thing.</p>
+      </section>
+
+      <section class="touch-zone" id="touchZone" aria-label="Finger choosing area">
+        <div class="orbit orbit-one" aria-hidden="true"></div>
+        <div class="orbit orbit-two" aria-hidden="true"></div>
+        <div class="empty-state" id="emptyState">
+          <div class="fingerprint" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <p>touch anywhere</p>
+        </div>
+      </section>
+
+      <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+      <footer>
+        <span><b class="status-dot"></b><span id="statusText">READY WHEN YOU ARE</span></span>
+        <span>NO PEEKING <span class="spark">✦</span></span>
+      </footer>
+    </main>
+
+    <dialog id="installDialog">
+      <button class="dialog-close" id="closeDialog" aria-label="Close">×</button>
+      <div class="dialog-icon" aria-hidden="true">↗</div>
+      <p class="dialog-kicker">KEEP FATE HANDY</p>
+      <h2>Add Fingies<br />to your Home Screen</h2>
+      <ol>
+        <li><span>1</span><p>Open this page in <strong>Safari</strong></p></li>
+        <li><span>2</span><p>Tap the <strong>Share</strong> button</p></li>
+        <li><span>3</span><p>Choose <strong>Add to Home Screen</strong></p></li>
+      </ol>
+      <button class="got-it" id="gotIt">Got it!</button>
+    </dialog>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

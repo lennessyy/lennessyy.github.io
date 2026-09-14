@@ -2,12 +2,16 @@
   "name": "lennessyy-portfolio",
   "type": "module",
   "version": "0.0.1",
+  "workspaces": [
+    "apps/chooser"
+  ],
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "npm run build:chooser && astro build",
+    "build:chooser": "npm run build --workspace=fingies-chooser",
     "preview": "astro preview",
     "astro": "astro"
   },
