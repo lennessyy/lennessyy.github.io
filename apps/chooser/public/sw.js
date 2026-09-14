@@ -1,4 +1,4 @@
-const CACHE = 'fingies-v2';
+const CACHE = 'fingies-v3';
 const BASE = new URL(self.registration.scope).pathname;
 const at = (path) => `${BASE}${path}`;
 const CORE = [
@@ -24,7 +24,7 @@ self.addEventListener('install', (event) => {
     const page = await fetch(at('index.html'));
     const html = await page.clone().text();
     const assets = [...html.matchAll(/(?:src|href)="([^"#]+)"/g)]
-      .map((match) => new URL(match[1], self.location.origin))
+      .map((match) => new URL(match[1], new URL(at('index.html'), self.location.origin)))
       .filter((url) => url.origin === self.location.origin)
       .map((url) => url.pathname);
     await Promise.all([...new Set(assets)].map(async (url) => {
@@ -53,6 +53,11 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match(at('index.html'))))
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached) return cached;
+        if (event.request.mode === 'navigate') return caches.match(at('index.html'));
+        return Response.error();
+      })
   );
 });
