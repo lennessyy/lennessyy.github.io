@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilmRatingGuide from '../../components/FilmRatingGuide.astro';
 import reviewsData from '../../data/reviews.json';
 
 export function getStaticPaths({ paginate }: { paginate: Function }) {
@@ -41,6 +42,8 @@ const searchDataJson = JSON.stringify(searchableReviews).replace(/</g, '\\u003c'
   <p class="mt-2 text-sm text-[var(--color-text-secondary)]">
     Pulled from my <a href="https://letterboxd.com/lennessy/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-link)] hover:text-[var(--color-link-hover)] underline transition-colors">Letterboxd</a>.
   </p>
+
+  <FilmRatingGuide />
 
   <div class="mt-8">
     <div class="flex flex-col gap-3 sm:flex-row">

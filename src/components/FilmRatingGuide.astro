@@ -1,0 +1,120 @@
+---
+const standards = [
+  { rating: 0.5, description: 'I actively hate it and wish it didn’t exist.' },
+  { rating: 1, description: 'It really annoyed me and I could not finish it. Even if I did manage to finish it, it’s only because I had nothing better to do—I knew it was doomed beyond doubt the whole time.' },
+  { rating: 1.5, description: 'I had to twist my arm to sit through it, either because I wanted to give it the benefit of the doubt or because of some morbid curiosity, and regretted it afterwards.' },
+  { rating: 2, description: 'The film made an earnest attempt to tell a story, but does not succeed. It has no other redeeming qualities, and the story is trite. Nonetheless, I am okay with having spent time watching it.' },
+  { rating: 2.5, description: 'The film does not fully work, but is partially redeemed by at least one thing that it does well.' },
+  { rating: 3, description: 'The film manages to tell a story with consistent execution and manages to keep me entertained for more than half of its runtime.' },
+  { rating: 3.5, description: '3, but either the story itself or the way of storytelling is also fresh and exciting.' },
+  { rating: 4, description: 'Fantastic story told in a highly innovative and interesting way, with standout performances from the cast.' },
+  { rating: 4.5, description: 'Phenomenal cinematic achievement that destroys me or otherwise manages to shake me to my core.' },
+  { rating: 5, description: 'Viewing this film was a life changing experience that has left a recognizable mark on my soul.' },
+];
+---
+
+<details class="rating-guide" id="rating-standards">
+  <summary>
+    <span class="guide-label">How I rate films</span>
+    <span class="guide-range" aria-hidden="true">½ <span>→</span> ★★★★★</span>
+    <svg class="guide-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" />
+    </svg>
+  </summary>
+
+  <dl class="rating-scale">
+    {standards.map(({ rating, description }) => (
+      <div class="rating-row">
+        <dt>
+          <span class="rating-number">{rating.toFixed(1)}<span class="sr-only"> out of 5</span></span>
+          <span class="rating-stars" aria-hidden="true">{'★'.repeat(Math.floor(rating))}{rating % 1 ? '½' : ''}</span>
+        </dt>
+        <dd>{description}</dd>
+      </div>
+    ))}
+  </dl>
+</details>
+
+<style>
+  .rating-guide {
+    margin-top: 1.5rem;
+    border-block: 1px solid var(--color-border);
+    scroll-margin-top: 1.5rem;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 1rem;
+    cursor: pointer;
+    list-style: none;
+    color: var(--color-heading);
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .guide-label {
+    flex: 1;
+    font-size: 0.8125rem;
+  }
+
+  .guide-range {
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .guide-range span {
+    margin-inline: 0.25rem;
+    color: var(--color-text-secondary);
+  }
+
+  .guide-chevron { flex-shrink: 0; color: var(--color-text-secondary); }
+  summary:hover .guide-label { color: var(--color-accent); }
+  .rating-guide[open] .guide-chevron { transform: rotate(180deg); }
+
+  .rating-scale { margin: 0; padding-bottom: 0.5rem; }
+
+  .rating-row {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1.125rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  dt { display: flex; align-items: baseline; gap: 0.75rem; }
+
+  .rating-number {
+    color: var(--color-heading);
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rating-stars {
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 480px) {
+    .rating-row { grid-template-columns: 4rem minmax(0, 1fr); gap: 0.875rem; }
+    dt { flex-direction: column; gap: 0.25rem; }
+    .rating-stars { font-size: 0.6875rem; }
+  }
+</style>
