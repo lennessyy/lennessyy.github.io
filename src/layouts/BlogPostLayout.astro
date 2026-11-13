@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import { absoluteUrl, pageUrl, person } from '../lib/metadata';
 
 interface Heading {
   depth: number;
@@ -21,9 +22,23 @@ interface Props {
 
 const { frontmatter, headings = [] } = Astro.props;
 const date = new Date(frontmatter.pubDate);
+const canonical = pageUrl(Astro.url.pathname, Astro.site);
+const markdownUrl = absoluteUrl(`${Astro.url.pathname.replace(/\/+$/, '')}.md`, Astro.site);
+const structuredData = {
+  '@type': 'BlogPosting',
+  '@id': `${canonical}#article`,
+  url: canonical,
+  mainEntityOfPage: canonical,
+  headline: frontmatter.title,
+  description: frontmatter.description,
+  datePublished: date.toISOString(),
+  author: { '@id': person(Astro.site)['@id'] },
+  inLanguage: 'en',
+  keywords: frontmatter.tags,
+};
 ---
 
-<BaseLayout title={`${frontmatter.title} — Lenny Chen`} description={frontmatter.description}>
+<BaseLayout title={`${frontmatter.title} — Lenny Chen`} description={frontmatter.description} structuredData={structuredData} markdownUrl={markdownUrl}>
   {!frontmatter.narrative && <TableOfContents headings={headings} />}
   <article>
     <header class="mb-8">
@@ -31,6 +46,7 @@ const date = new Date(frontmatter.pubDate);
       <time class="mt-2 block text-sm text-[var(--color-text-secondary)]" datetime={date.toISOString()}>
         {date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
       </time>
+      <a href={markdownUrl} class="mt-2 inline-block text-sm text-[var(--color-link)] underline">Read as Markdown</a>
       {frontmatter.tags && frontmatter.tags.length > 0 && (
         <div class="mt-2 flex flex-wrap gap-2 text-sm text-[var(--color-text-secondary)]">
           {frontmatter.tags.map((tag) => (

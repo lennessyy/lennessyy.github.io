@@ -2,13 +2,21 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+import { absoluteUrl, pageUrl, person, jsonForHtml, siteDescription } from '../lib/metadata';
 
 interface Props {
   title?: string;
   description?: string;
+  structuredData?: Record<string, unknown>;
+  markdownUrl?: string;
 }
 
-const { title = 'Lenny Chen', description = "I'm Lenny Chen, an SF Bay Area-based writer, developer, and amateur film reviewer." } = Astro.props;
+const { title = 'Lenny Chen', description = siteDescription, structuredData, markdownUrl } = Astro.props;
+const canonical = pageUrl(Astro.url.pathname, Astro.site);
+const metadata = {
+  '@context': 'https://schema.org',
+  '@graph': [person(Astro.site), ...(structuredData ? [structuredData] : [])],
+};
 ---
 
 <!doctype html>
@@ -17,6 +25,11 @@ const { title = 'Lenny Chen', description = "I'm Lenny Chen, an SF Bay Area-base
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title="Lenny Chen — Blog" href={absoluteUrl('/rss.xml', Astro.site)} />
+    <link rel="describedby" type="application/json" title="Content index" href={absoluteUrl('/content.json', Astro.site)} />
+    {markdownUrl && <link rel="alternate" type="text/markdown" title="Markdown" href={markdownUrl} />}
+    <script is:inline type="application/ld+json" set:html={jsonForHtml(metadata)} />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

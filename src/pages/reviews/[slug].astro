@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import reviews from '../../data/reviews.json';
+import { pageUrl, person } from '../../lib/metadata';
 
 export function getStaticPaths() {
   return (reviews as any[])
@@ -42,9 +43,33 @@ function formatReviewHtml(html: string | null): string {
 }
 
 const reviewHtml = formatReviewHtml(review.reviewHtml);
+const canonical = pageUrl(Astro.url.pathname, Astro.site);
+const structuredData = {
+  '@type': 'Review',
+  '@id': `${canonical}#review`,
+  url: canonical,
+  mainEntityOfPage: canonical,
+  author: { '@id': person(Astro.site)['@id'] },
+  itemReviewed: {
+    '@type': 'Movie',
+    name: review.filmTitle,
+    ...(review.filmYear ? { disambiguatingDescription: `${review.filmYear} film` } : {}),
+  },
+  reviewBody: review.reviewText,
+  ...(review.rating != null ? {
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: review.rating,
+      worstRating: 0.5,
+      bestRating: 5,
+    },
+  } : {}),
+  sameAs: review.letterboxdUrl,
+  inLanguage: 'en',
+};
 ---
 
-<BaseLayout title={`${review.filmTitle} — Lenny Chen`} description={reviewDescription}>
+<BaseLayout title={`${review.filmTitle} — Lenny Chen`} description={reviewDescription} structuredData={structuredData}>
   <a id="back-link" href="/reviews" class="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors">
     &larr; All reviews
   </a>
@@ -65,7 +90,7 @@ const reviewHtml = formatReviewHtml(review.reviewHtml);
     </h1>
     <div class="mt-2 flex items-center gap-3 text-sm text-[var(--color-text-secondary)]">
       {review.rating && (
-        <span class="text-[var(--color-accent)]">{stars(review.rating)}</span>
+        <span class="text-[var(--color-accent)]" aria-label={`${review.rating} out of 5 stars`}>{stars(review.rating)}<span class="sr-only"> ({review.rating} out of 5)</span></span>
       )}
       <time datetime={review.watchedDate}>
         Watched {watchedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
