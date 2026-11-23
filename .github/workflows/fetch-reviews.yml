@@ -14,7 +14,7 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.commit.outputs.changed }}
+      changed: ${{ steps.commit-reviews.outputs.changed }}
       posted: ${{ steps.post-bluesky.outputs.posted }}
     steps:
       - name: Checkout
@@ -32,6 +32,20 @@ jobs:
       - name: Fetch reviews
         run: node scripts/fetch-reviews.mjs
 
+      - name: Commit refreshed reviews
+        id: commit-reviews
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/reviews.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Update Letterboxd reviews"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Post new reviews to Bluesky
         id: post-bluesky
         env:
@@ -39,18 +53,18 @@ jobs:
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
         run: node scripts/post-to-bluesky.mjs
 
-      - name: Commit and push if changed
-        id: commit
+      - name: Commit Bluesky posting state
+        id: commit-posted
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/reviews.json src/data/bluesky-posted.json
+          git add src/data/bluesky-posted.json
           if git diff --cached --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "posted=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "Update Letterboxd reviews"
+            git commit -m "Update Bluesky posting state"
             git push
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "posted=true" >> "$GITHUB_OUTPUT"
           fi
 
   backlog:
